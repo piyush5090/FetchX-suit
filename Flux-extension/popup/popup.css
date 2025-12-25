@@ -1,0 +1,191 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0d1220;
+  color: #e5e7eb;
+  width: 360px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  padding: 14px;
+}
+
+/* ---------- Header ---------- */
+.header {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1e2638;
+}
+
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.header p {
+  margin: 0;
+  font-size: 12px;
+  color: #8a97b2;
+}
+
+/* ---------- Inputs ---------- */
+input,
+select,
+button {
+  font-size: 14px;
+}
+
+/* Search */
+.search-section {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.search-section input,
+#countInput {
+  flex: 1;
+  padding: 9px;
+  background: #161c2d;
+  border: 1px solid #232b3f;
+  border-radius: 6px;
+  color: #fff;
+}
+
+.search-section input:focus,
+#countInput:focus,
+.media-type select:focus {
+  outline: none;
+  border-color: #1d66ff;
+}
+
+/* Buttons */
+.search-section button,
+#downloadBtn {
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: none;
+  background: #1d66ff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.search-section button:disabled,
+#downloadBtn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---------- Media type ---------- */
+.media-type {
+  display: flex;
+  justify-content: space-between;
+  background: #131929;
+  padding: 9px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border: 1px solid #232b3f;
+}
+
+.media-type label {
+  font-size: 13px;
+  color: #c2c7d3;
+}
+
+.media-type select {
+  background: #161c2d;
+  color: white;
+  border: 1px solid #232b3f;
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* ---------- Provider results ---------- */
+.provider-results {
+  background: #131929;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  border: 1px solid #232b3f;
+}
+
+.provider-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #1e2638;
+}
+
+.provider-row:last-child {
+  border-bottom: none;
+}
+
+/* ---------- Progress ---------- */
+.progress-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+#progressProviders div {
+  font-size: 12px;
+  color: #8a97b2;
+  padding: 3px 0;
+}
+
+/* ---------- Controls ---------- */
+#controlSection {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+#pauseBtn, #stopBtn {
+  flex: 1;
+  border: none;
+  padding: 9px 0;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#pauseBtn {
+  background: #db8b10;
+}
+
+#stopBtn {
+  background: #d62839;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 11px;
+  color: #8a97b2;
+  border-top: 1px solid #1e2638;
+  padding-top: 10px;
+}
+
+/* ---------- Hide ---------- */
+.hidden {
+  display: none;
+}

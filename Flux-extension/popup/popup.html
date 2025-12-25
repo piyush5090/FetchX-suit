@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flux by FetchX</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header class="header">
+      <img src="../assets/icon.png" class="logo" />
+      <div>
+        <h1>Flux by FetchX</h1>
+        <p>Download stock media at scale</p>
+      </div>
+    </header>
+
+    <!-- Search -->
+    <div class="search-section">
+      <input id="queryInput" type="text" placeholder="Search stock media" />
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <!-- Media type -->
+    <div class="media-type">
+      <label>Media type</label>
+      <select id="mediaTypeSelect">
+        <option value="images">Images</option>
+        <option value="videos">Videos</option>
+      </select>
+    </div>
+
+    <!-- Results -->
+    <div id="resultsSection" class="hidden">
+      <div class="results-header">
+        <span>Max downloadable</span>
+        <strong id="maxLimit">—</strong>
+      </div>
+
+      <div id="providerResults" class="provider-results"></div>
+
+      <input id="countInput" type="number" min="1" placeholder="How many?" />
+      <button id="downloadBtn" disabled>Start Download</button>
+    </div>
+
+    <!-- Progress -->
+    <div id="progressSection" class="hidden">
+      <p class="progress-title">Download Progress</p>
+      <div id="progressTotal">—</div>
+      <div id="progressProviders"></div>
+    </div>
+
+    <!-- Controls -->
+    <div id="controlSection" class="hidden">
+      <button id="pauseBtn">Pause</button>
+      <button id="stopBtn">Stop</button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span id="statusText">Status: Idle</span>
+    </footer>
+
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
