@@ -14,6 +14,7 @@ app.use(
     origin: [
       "http://localhost:3000",
       "https://fetchx-backend.onrender.com",
+      "https://nexus-web-steel.vercel.app",
       /^chrome-extension:\/\//,
     ],
   })
