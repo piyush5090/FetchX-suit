@@ -1,6 +1,7 @@
 console.log("POPUP LOADED");
 
-const BACKEND_URL = "https://fetchx-backend-fucw.onrender.com";
+//const BACKEND_URL = "https://fetchx-backend-fucw.onrender.com";
+const BACKEND_URL = "https://fetchx-suit.onrender.com";
 
 /* ===== DOM ===== */
 let currentStatus = "idle";
