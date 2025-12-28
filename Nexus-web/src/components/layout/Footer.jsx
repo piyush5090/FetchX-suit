@@ -1,6 +1,6 @@
 import React from 'react';
 /* Corrected icon to LuPlay for standard Lucide set */
-import { LuLayers, LuGithub, LuTwitter, LuGlobe, LuExternalLink, LuArrowRight, LuDownload, LuPlay, LuBookOpen } from 'react-icons/lu';
+import { LuLayers, LuGithub, LuTwitter, LuGlobe, LuExternalLink, LuArrowRight, LuDownload, LuPlay, LuBookOpen, LuTerminal } from 'react-icons/lu';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -79,6 +79,11 @@ const Footer = () => {
               <li>
                 <a href="/docs" className="flex items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group">
                   <LuBookOpen size={16} className="group-hover:scale-110 transition-transform" /> Documentation
+                </a>
+              </li>
+              <li>
+                <a href="#" className="flex items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group">
+                  <LuTerminal size={16} className="group-hover:scale-110 transition-transform" /> API
                 </a>
               </li>
               <li>

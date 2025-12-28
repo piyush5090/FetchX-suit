@@ -1,7 +1,7 @@
 console.log("FETCHX WORKER LOADED (ID-BASED SAFETY)");
 
-//const BACKEND_URL = "https://fetchx-backend-fucw.onrender.com";
-const BACKEND_URL = "https://fetchx-suit.onrender.com";
+//const BACKEND_URL = "https://fetchx-suit.onrender.com";
+const BACKEND_URL="http://localhost:3000";
 
 /* ================= CONSTANTS ================= */
 const STORAGE_KEY = "fetchxJob";
@@ -180,7 +180,12 @@ async function run(myRunId) {
       let data;
       try {
         const res = await fetch(
-          `${BACKEND_URL}/metadata/${providerName}/${resolveRoute(providerName, mediaType)}?query=${encodeURIComponent(state.job.query)}&page=${p.page}&perPage=${p.perPage}`
+          `${BACKEND_URL}/metadata/${providerName}/${resolveRoute(providerName, mediaType)}?query=${encodeURIComponent(state.job.query)}&page=${p.page}&perPage=${p.perPage}`,
+          {
+            headers: {
+              "Authorization": `Bearer bc742fd8-9b78-45d5-a44c-83200288ed7c`,
+            }
+          }
         );
         data = await res.json();
       } catch (err) {

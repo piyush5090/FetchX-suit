@@ -1,31 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { LuLayers, LuDownload, LuGithub, LuMoon, LuSun, LuTerminal } from 'react-icons/lu';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../features/auth/authSlice';
+import { LuLayers, LuTerminal, LuUser, LuLogIn, LuMoon, LuSun } from 'react-icons/lu';
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 5);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle('dark');
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
   };
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-200 ${
-      isScrolled 
-        ? 'py-2 bg-white/95 dark:bg-[#020617]/95 backdrop-blur-sm border-b border-slate-200/50 dark:border-slate-800/50 shadow-sm' 
-        : 'py-4 bg-transparent'
-    }`}>
+    <nav className="py-4">
       <div className="max-w-[1440px] mx-auto px-6 flex justify-between items-center">
         
-        {/* 1. Brand Identity: Nexus by FetchX */}
-        <div className="flex items-center gap-2.5 cursor-pointer group">
+        <Link to="/" className="flex items-center gap-2.5 cursor-pointer group">
           <div className="p-1.5 bg-blue-600 rounded-lg shadow-sm transform group-hover:rotate-6 transition-transform">
             <LuLayers className="text-white" size={14} />
           </div>
@@ -37,23 +30,37 @@ const Navbar = () => {
               by FetchX
             </span>
           </div>
-        </div>
+        </Link>
 
-        {/* 2. Scaled Down Navigation */}
-        <div className="hidden md:flex items-center gap-6">
-          <div className="flex gap-5 items-center">
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5">
             <a href="/docs" className="text-[11px] font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-[0.15em]">
               Docs
             </a>
           </div>
 
-          <div className="h-3 w-px bg-slate-200 dark:bg-slate-800" />
+          <div className="hidden md:block h-3 w-px bg-slate-200 dark:bg-slate-800" />
 
-          {/* Extension Beta Link */}
-          <button className="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-all group">
-            <LuTerminal size={12} className="group-hover:text-blue-600 transition-colors" /> 
-            <span className="text-[10px] font-black uppercase tracking-tight">Extension Beta</span>
-          </button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="flex items-center gap-1.5 text-slate-500 hover:text-blue-600 transition-all group">
+                <LuUser size={12} className="group-hover:text-blue-600 transition-colors" />
+                <span className="text-[10px] font-black uppercase tracking-tight">Profile</span>
+              </Link>
+              <button onClick={handleLogout} className="text-sm font-bold text-slate-500 hover:text-red-500 transition-colors">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <Link to="/login" className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                Login
+              </Link>
+              <Link to="/register" className="px-4 py-2 text-sm font-bold text-black bg-blue-100 rounded-md hover:bg-blue-300">
+                Register
+              </Link>
+            </div>
+          )}
         </div>
 
       </div>

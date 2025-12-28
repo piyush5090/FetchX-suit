@@ -8,7 +8,7 @@ import { LuChevronLeft, LuChevronRight, LuLoader, LuLayers, LuZap, LuImage, LuVi
 
 const Home = () => {
   const dispatch = useDispatch();
-  const { query, mediaType, page, items, status, error } = useSelector((state) => state.media);
+  const { query, mediaType, page, items, status, error, fetchTime } = useSelector((state) => state.media);
 
   useEffect(() => {
     if(query) dispatch(fetchMedia());
@@ -142,7 +142,7 @@ const Home = () => {
                         <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">Nodes Found</p>
                       </div>
                       <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <p className="text-xl font-black text-blue-600">124ms</p>
+                        <p className="text-xl font-black text-blue-600">{`${fetchTime}ms`}</p>
                         <p className="text-[9px] font-bold text-slate-500 uppercase tracking-tighter">API Latency</p>
                       </div>
                    </div>

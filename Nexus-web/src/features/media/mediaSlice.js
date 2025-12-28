@@ -50,49 +50,52 @@ const normalizePixabay = (item, mediaType) => ({
 
 export const fetchSearchCounts = createAsyncThunk(
   'media/fetchSearchCounts',
-  async (_, { getState }) => {
+  async (_, { getState, signal }) => {
     const { query, mediaType } = getState().media;
     if (!query) return null;
-    const response = await fetchProviderCounts(query, mediaType);
+    const response = await fetchProviderCounts(query, mediaType, signal);
     return response.providers;
   }
 );
 
 export const fetchMedia = createAsyncThunk(
   'media/fetchMedia',
-  async (_, { getState }) => {
+  async (_, { getState, signal }) => {
     const { query, mediaType, page } = getState().media;
     
+    const startTime = Date.now();
     let promises = [];
 
     if (mediaType === 'images') {
       promises = [
-        fetchPexels('images', query, page).then(data => data.items.map(item => normalizePexels(item, 'images'))),
-        fetchUnsplash(query, page).then(data => data.items.map(normalizeUnsplash)),
-        fetchPixabay('photos', query, page).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
-        fetchPixabay('illustrations', query, page).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
-        fetchPixabay('vectors', query, page).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
+        fetchPexels('images', query, page, signal).then(data => data.items.map(item => normalizePexels(item, 'images'))),
+        fetchUnsplash(query, page, signal).then(data => data.items.map(normalizeUnsplash)),
+        fetchPixabay('photos', query, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
+        fetchPixabay('illustrations', query, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
+        fetchPixabay('vectors', query, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
       ];
     } else if (mediaType === 'videos') {
       promises = [
-        fetchPexels('videos', query, page).then(data => data.items.map(item => normalizePexels(item, 'videos'))),
-        fetchPixabay('videos', query, page).then(data => data.items.map(item => normalizePixabay(item, 'videos'))),
+        fetchPexels('videos', query, page, signal).then(data => data.items.map(item => normalizePexels(item, 'videos'))),
+        fetchPixabay('videos', query, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'videos'))),
       ];
     }
 
     const results = await Promise.allSettled(promises);
+    const fetchTime = Date.now() - startTime;
     const combinedMedia = results
       .filter(result => result.status === 'fulfilled')
       .flatMap(result => result.value);
 
     // simple shuffle
-    return combinedMedia.sort(() => Math.random() - 0.5);
+    const shuffledMedia = combinedMedia.sort(() => Math.random() - 0.5);
+    return { combinedMedia: shuffledMedia, fetchTime };
   }
 );
 
 export const fetchRelatedMedia = createAsyncThunk(
   'media/fetchRelatedMedia',
-  async (_, { getState }) => {
+  async (_, { getState, signal }) => {
     const { query: originalQuery, mediaType, selectedItem, relatedItemsPage } = getState().media;
 
     // Use the first tag of the selected item, or fall back to the original query
@@ -102,14 +105,14 @@ export const fetchRelatedMedia = createAsyncThunk(
     let promises = [];
     if (mediaType === 'images') {
       promises = [
-        fetchPexels('images', relatedQuery, page).then(data => data.items.map(item => normalizePexels(item, 'images'))),
-        fetchUnsplash(relatedQuery, page).then(data => data.items.map(normalizeUnsplash)),
-        fetchPixabay('photos', relatedQuery, page).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
+        fetchPexels('images', relatedQuery, page, signal).then(data => data.items.map(item => normalizePexels(item, 'images'))),
+        fetchUnsplash(relatedQuery, page, signal).then(data => data.items.map(normalizeUnsplash)),
+        fetchPixabay('photos', relatedQuery, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'images'))),
       ];
     } else if (mediaType === 'videos') {
       promises = [
-        fetchPexels('videos', relatedQuery, page).then(data => data.items.map(item => normalizePexels(item, 'videos'))),
-        fetchPixabay('videos', relatedQuery, page).then(data => data.items.map(item => normalizePixabay(item, 'videos'))),
+        fetchPexels('videos', relatedQuery, page, signal).then(data => data.items.map(item => normalizePexels(item, 'videos'))),
+        fetchPixabay('videos', relatedQuery, page, signal).then(data => data.items.map(item => normalizePixabay(item, 'videos'))),
       ];
     }
 
@@ -134,6 +137,7 @@ const initialState = {
   selectedItem: null,
   providerCounts: null,
   countsStatus: 'idle',
+  fetchTime: 0,
   // New state for related media
   relatedItems: [],
   relatedItemsPage: 1,
@@ -178,11 +182,14 @@ const mediaSlice = createSlice({
       })
       .addCase(fetchMedia.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload;
+        state.items = action.payload.combinedMedia;
+        state.fetchTime = action.payload.fetchTime;
       })
       .addCase(fetchMedia.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
+        if (action.error.name !== 'AbortError') {
+          state.status = 'failed';
+          state.error = action.error.message;
+        }
       })
       // Reducers for fetchSearchCounts
       .addCase(fetchSearchCounts.pending, (state) => {
@@ -192,8 +199,10 @@ const mediaSlice = createSlice({
         state.countsStatus = 'succeeded';
         state.providerCounts = action.payload;
       })
-      .addCase(fetchSearchCounts.rejected, (state) => {
-        state.countsStatus = 'failed';
+      .addCase(fetchSearchCounts.rejected, (state, action) => {
+        if (action.error.name !== 'AbortError') {
+          state.countsStatus = 'failed';
+        }
       })
       // Reducers for fetchRelatedMedia
       .addCase(fetchRelatedMedia.pending, (state) => {
@@ -204,8 +213,10 @@ const mediaSlice = createSlice({
         state.relatedItemsPage += 1;
         state.relatedItemsStatus = 'succeeded';
       })
-      .addCase(fetchRelatedMedia.rejected, (state) => {
-        state.relatedItemsStatus = 'failed';
+      .addCase(fetchRelatedMedia.rejected, (state, action) => {
+        if (action.error.name !== 'AbortError') {
+          state.relatedItemsStatus = 'failed';
+        }
       });
   },
 });

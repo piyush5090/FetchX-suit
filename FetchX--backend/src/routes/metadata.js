@@ -5,16 +5,95 @@ import {
 } from "../services/pexels.js";
 import { getUnsplashImages } from "../services/unsplash.js";
 import { getPixabayMetadata } from "../services/pixabay.js";
+import { authenticateAndCheckQuota } from "../middleware/auth.js";
+import {
+  normalizePexels,
+  normalizeUnsplash,
+  normalizePixabayImages,
+  normalizePixabayVideos,
+  normalizePexelsVideos
+} from "../utils/normalize.js";
 
 const router = express.Router();
+
+// Apply authentication and quota middleware to all metadata routes
+router.use(authenticateAndCheckQuota);
+
+/* =========================
+   ALL (Aggregated)
+========================= */
+
+router.get("/all/images", async (req, res) => {
+  const { query, page = 1, perPage = 20 } = req.query; // Smaller perPage for aggregated endpoint
+  if (!query) return res.status(400).json({ error: "query is required" });
+
+  try {
+    const [pexelsData, unsplashData, pixabayData] = await Promise.all([
+      getPexelsImages(query, Number(page), Number(perPage)),
+      getUnsplashImages(query, Number(page), Number(perPage)),
+      getPixabayMetadata("photos", query, Number(page), Number(perPage)),
+    ]);
+
+    const normalizedPexels = normalizePexels(pexelsData);
+    const normalizedUnsplash = normalizeUnsplash(unsplashData);
+    const normalizedPixabay = normalizePixabayImages(pixabayData);
+
+    const allItems = [...normalizedPexels, ...normalizedUnsplash, ...normalizedPixabay];
+
+    // Simple shuffle to mix results
+    allItems.sort(() => Math.random() - 0.5);
+
+    res.json({
+      provider: "all",
+      type: "images",
+      query,
+      page: Number(page),
+      perPage: Number(perPage) * 3, // Effective perPage
+      total: pexelsData.total + unsplashData.total + pixabayData.total,
+      items: allItems,
+    });
+  } catch (err) {
+    console.error("Aggregated images error:", err.message);
+    res.status(500).json({ error: "Failed to fetch aggregated images" });
+  }
+});
+
+router.get("/all/videos", async (req, res) => {
+  const { query, page = 1, perPage = 20 } = req.query;
+  if (!query) return res.status(400).json({ error: "query is required" });
+
+  try {
+    const [pexelsData, pixabayData] = await Promise.all([
+      getPexelsVideos(query, Number(page), Number(perPage)),
+      getPixabayMetadata("videos", query, Number(page), Number(perPage)),
+    ]);
+
+    const normalizedPexels = normalizePexelsVideos(pexelsData);
+    const normalizedPixabay = normalizePixabayVideos(pixabayData);
+
+    const allItems = [...normalizedPexels, ...normalizedPixabay];
+    allItems.sort(() => Math.random() - 0.5);
+
+    res.json({
+      provider: "all",
+      type: "videos",
+      query,
+      page: Number(page),
+      perPage: Number(perPage) * 2,
+      total: pexelsData.total + pixabayData.total,
+      items: allItems,
+    });
+  } catch (err) {
+    console.error("Aggregated videos error:", err.message);
+    res.status(500).json({ error: "Failed to fetch aggregated videos" });
+  }
+});
+
 
 /* =========================
    PEXELS
 ========================= */
 
-/**
- * GET /metadata/pexels/images
- */
 router.get("/pexels/images", async (req, res) => {
   const { query, page = 1, perPage = 80 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -38,9 +117,6 @@ router.get("/pexels/images", async (req, res) => {
   }
 });
 
-/**
- * GET /metadata/pexels/videos
- */
 router.get("/pexels/videos", async (req, res) => {
   const { query, page = 1, perPage = 30 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -68,9 +144,6 @@ router.get("/pexels/videos", async (req, res) => {
    UNSPLASH (photos only)
 ========================= */
 
-/**
- * GET /metadata/unsplash/photos
- */
 router.get("/unsplash/images", async (req, res) => {
   const { query, page = 1, perPage = 30 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -98,9 +171,6 @@ router.get("/unsplash/images", async (req, res) => {
    PIXABAY
 ========================= */
 
-/**
- * GET /metadata/pixabay/photos
- */
 router.get("/pixabay/photos", async (req, res) => {
   const { query, page = 1, perPage = 80 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -125,9 +195,6 @@ router.get("/pixabay/photos", async (req, res) => {
   }
 });
 
-/**
- * GET /metadata/pixabay/illustrations
- */
 router.get("/pixabay/illustrations", async (req, res) => {
   const { query, page = 1, perPage = 80 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -152,9 +219,6 @@ router.get("/pixabay/illustrations", async (req, res) => {
   }
 });
 
-/**
- * GET /metadata/pixabay/vectors
- */
 router.get("/pixabay/vectors", async (req, res) => {
   const { query, page = 1, perPage = 80 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
@@ -179,9 +243,6 @@ router.get("/pixabay/vectors", async (req, res) => {
   }
 });
 
-/**
- * GET /metadata/pixabay/videos
- */
 router.get("/pixabay/videos", async (req, res) => {
   const { query, page = 1, perPage = 50 } = req.query;
   if (!query) return res.status(400).json({ error: "query is required" });
