@@ -1,7 +1,8 @@
 console.log("FETCHX WORKER LOADED (ID-BASED SAFETY)");
 
 //const BACKEND_URL = "https://fetchx-suit.onrender.com";
-const BACKEND_URL="http://localhost:3000";
+//const BACKEND_URL="http://localhost:3000";
+const BACKEND_URL = "https://fetchx-zi49.onrender.com";
 
 /* ================= CONSTANTS ================= */
 const STORAGE_KEY = "fetchxJob";
