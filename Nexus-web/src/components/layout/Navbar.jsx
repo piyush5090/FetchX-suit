@@ -34,7 +34,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-5">
-            <a href="/docs" className="text-[11px] font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-[0.15em]">
+            <a href="https://piyush5090.github.io/FetchX-docs" className="text-[11px] font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-[0.15em]">
               Docs
             </a>
           </div>

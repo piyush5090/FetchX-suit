@@ -76,13 +76,13 @@ const Footer = () => {
                   <LuPlay size={16} className="group-hover:scale-110 transition-transform fill-blue-600/10" /> Watch Extension Demo
                 </button>
               </li>
-              <li>
+              {/* <li>
                 <a href="/docs" className="flex items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group">
                   <LuBookOpen size={16} className="group-hover:scale-110 transition-transform" /> Documentation
                 </a>
-              </li>
+              </li> */}
               <li>
-                <a href="#" className="flex items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group">
+                <a href="https://piyush5090.github.io/FetchX-docs/" className="flex items-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-blue-600 transition-all group">
                   <LuTerminal size={16} className="group-hover:scale-110 transition-transform" /> API
                 </a>
               </li>
